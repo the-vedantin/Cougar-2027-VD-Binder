@@ -771,9 +771,25 @@ const INFO=document.getElementById('l3dinfo'), PH=INFO?INFO.innerHTML:'';
 let yaw=-0.95,pitch=0.33,zoom=1,panX=0,panY=0,drag=null,hoverPt=-1,H=480,angleSel=-1;
 const noteEl=document.getElementById('l3dnote');
 function syncNote(){if(noteEl)noteEl.classList.toggle('on',loadMode()==='angle');}
-let cx=0,cy=0,cz=0,n=0;
-CAR.segs.forEach(s=>{[s.a,s.b].forEach(p=>{cx+=p[0];cy+=p[1];cz+=p[2];n++;});});
-cx/=n;cy/=n;cz/=n;
+// The revolve centre (cx,cy,cz) is dynamic: the whole car by default, the
+// selected CORNER in corner mode, or the CLICKED force. Precompute the whole-car
+// and per-corner centroids from the model.
+function centroid(list){let x=0,y=0,z=0,m=0;
+ list.forEach(s=>{[s.a,s.b].forEach(p=>{x+=p[0];y+=p[1];z+=p[2];m++;});});
+ return m?[x/m,y/m,z/m]:[0,0,0];}
+const CAR_C=centroid(CAR.segs);
+const CORNER_C={};
+['FL','FR','RL','RR'].forEach(l=>{const segs=CAR.segs.filter(s=>s.corner===l);
+ CORNER_C[l]=segs.length?centroid(segs):CAR_C;});
+let cx=CAR_C[0],cy=CAR_C[1],cz=CAR_C[2];
+function setCentre(){
+ // clicked force wins, then the selected corner, then the whole car
+ let c=CAR_C;
+ const cc=csel?csel.value:'all corners';
+ if(cc!=='all corners' && CORNER_C[cc])c=CORNER_C[cc];
+ if(angleSel>=0){const q=pts()[angleSel]; if(q&&q.p)c=q.p;}
+ cx=c[0];cy=c[1];cz=c[2];panX=0;panY=0;   // put the new pivot at screen centre
+}
 function proj(p,W,S){const x=p[0]-cx,y=p[1]-cy,z=p[2]-cz;
  const x1=x*Math.cos(yaw)-y*Math.sin(yaw),y1=x*Math.sin(yaw)+y*Math.cos(yaw);
  const y2=y1*Math.cos(pitch)-z*Math.sin(pitch),z2=y1*Math.sin(pitch)+z*Math.cos(pitch);
@@ -1064,6 +1080,7 @@ window.addEventListener('mouseup',e=>{
  if(drag && !drag.moved){const r=cv.getBoundingClientRect();
   const hit=pickAt(e.clientX-r.left, e.clientY-r.top);
   angleSel = (hit>=0 && hit===angleSel) ? -1 : hit;   // click again to clear
+  setCentre();                                        // revolve around the clicked force
   draw();}
  drag=null;cv.style.cursor='grab';});
 window.addEventListener('mousemove',e=>{if(drag){
@@ -1082,8 +1099,8 @@ cv.addEventListener('wheel',e=>{e.preventDefault();
  const W=cv.width/devicePixelRatio;
  const nz=Math.max(0.25,Math.min(40,zoom*(e.deltaY<0?1.12:0.893))),g=nz/zoom;
  panX-=(mx-W/2-panX)*(g-1);panY-=(my-H/2-panY)*(g-1);zoom=nz;draw();},{passive:false});
-cv.addEventListener('dblclick',()=>{zoom=1;panX=0;panY=0;yaw=-0.95;pitch=0.33;draw();});
-function reset(){hoverPt=-1;angleSel=-1;syncNote();if(INFO)INFO.innerHTML=PH;draw();}
+cv.addEventListener('dblclick',()=>{zoom=1;yaw=-0.95;pitch=0.33;angleSel=-1;setCentre();draw();});
+function reset(){hoverPt=-1;angleSel=-1;syncNote();setCentre();if(INFO)INFO.innerHTML=PH;draw();}
 sel.addEventListener('change',reset);
 if(csel)csel.addEventListener('change',reset);
 chips.forEach(c=>c.querySelector('input').addEventListener('change',reset));
