@@ -2,9 +2,10 @@
 
 Interactive design binder for the 2027 car's suspension and vehicle dynamics.
 Everything in it — geometry, kinematic curves, dynamics, loads, the 3D model —
-is generated from the single solved Vahan model, config **v19**
-(full-perpendicular-triad ARBs on the champion dynamics; 60.92 s on the
-RoseLap 2018 map).
+is generated from the single solved Vahan model, config **v27**
+(pushrod outboard pivots mounted on the control arms and clear of the wheel and
+driveshaft, with motion ratios, ARB rates and roll centres preserved; 60.92 s on
+the RoseLap 2018 map).
 
 **View it: https://the-vedantin.github.io/Cougar-2027-VD-Binder/**
 
