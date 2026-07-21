@@ -32,7 +32,12 @@ body.navclosed main{margin-left:var(--railw)}
 :root{--railw:54px}
 #side{transition:width .18s ease, padding .18s ease}
 body.navclosed #side{width:var(--railw);padding-left:6px;padding-right:6px;overflow:visible}
-body.navclosed #side h1,body.navclosed #side #search,body.navclosed #side .sidefoot{display:none}
+/* Collapsed = section numbers ONLY. Hide the title, the config line, the whole
+   model box and its caption, and the search — leaving just the nav rail. Before,
+   the model viewer and its multi-line caption stayed and got crushed into the
+   54px column. */
+body.navclosed #side>h1,body.navclosed #side .sub,body.navclosed #side #modelbox,
+body.navclosed #side #search,body.navclosed #side .sidefoot{display:none}
 #navtoggle{position:absolute;top:10px;right:8px;z-index:6;width:26px;height:26px;
  border:1px solid var(--line);border-radius:6px;background:#fff;cursor:pointer;
  color:var(--muted);font-size:13px;line-height:1;padding:0}
