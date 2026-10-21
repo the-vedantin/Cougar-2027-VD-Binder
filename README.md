@@ -20,6 +20,7 @@ design record in one searchable place.
 - **Load cases:** 2.0 g cornering, 1.6 g braking and 1.6 g acceleration everywhere (3-D load view, tables, bearing grid, pedal box, brake bias, squat/launch). The old 1.5 g reference load cases are gone. Note: 1.6 g forward is beyond what the car can do (about 1.4 g at launch, under 1 g at speed) — kept as a conservative case.
 - **New: loads from the car's own G-G envelope** (Loads chapter): worst member and ball-joint loads over the border of the envelope at the 2 g case speed and the aero reference speed, with where each happens, next to the fixed 2.0 g / 1.6 g cases.
 - Brake lockup now taken from the 1.6 g braking case (it was picking up the combined cornering + braking case).
+- **New: diff preload vs corner-exit oversteer, with and without aero** (dynamics chapter). Same corner-exit model as the v186 exit study, on v191: going from maximum (90–120 N·m) to 0–15 N·m preload gives 13–17 % more throttle before the rear lets go without aero (about 20 % with aero) and cuts the yaw overshoot from about 22 % to 8–11 %. Power ramp 40° is ASSUMED (model default) until the team's diff settings are entered.
 
 ## What changed in the previous publication (v186, 2026-10-20)
 
